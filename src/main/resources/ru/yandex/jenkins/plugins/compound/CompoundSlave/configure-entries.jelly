@@ -1,0 +1,28 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:entry title="Description" field="description">
+    <f:textbox />
+  </f:entry>
+
+  <f:entry title="Label" field="label">
+    <f:textbox value="${instance.labelString}"/>
+  </f:entry>
+
+  <f:entry title="${%Sub-slaves}">
+    <f:repeatable name="slaveEntries" minimum="1" var="slave" noAddButton="false" items="${instance.entries}">
+      <table width="40%">
+        <f:entry title="${%Slave}" field="slave">
+          <f:select value="${slave.name}"/>
+        </f:entry>
+        <f:entry title="${%Role}" field="role">
+          <f:select value="${slave.role}"/>
+        </f:entry>
+        <f:entry title="">
+          <div align="right">
+            <f:repeatableDeleteButton />
+          </div>
+        </f:entry>
+      </table>
+    </f:repeatable>
+  </f:entry>
+</j:jelly>

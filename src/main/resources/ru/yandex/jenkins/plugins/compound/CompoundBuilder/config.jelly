@@ -1,0 +1,28 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:p="/lib/hundson/project">
+  <f:entry title="Sub-slave role" field="role">
+    <f:select />
+  </f:entry>
+
+  <f:entry title="Sub-slave number within role" field="number">
+    <f:select />
+  </f:entry>
+
+  <j:set var="outClazz" value="${descriptor.clazz.name}" trim="true"/>
+
+  <f:dropdownList name="actualBuilder" title="Action">
+    <j:forEach var="d" items="${h.getBuilderDescriptors(it)}">
+      <j:if test="${d.clazz.name != outClazz}">
+        <f:dropdownListBlock title="${d.displayName}" value="${d.clazz.name}" name="${d.displayName}"
+          selected="${instance.actualBuilder.descriptor==d}">
+          <j:set var="descriptor" value="${d}"/>
+          <j:set var="instance"
+               value="${instance.actualBuilder.descriptor==d ? instance.actualBuilder : null}"/>
+          <f:invisibleEntry>
+            <input type="hidden" name="stapler-class" value="${d.clazz.name}" />
+          </f:invisibleEntry>
+          <st:include from="${d}" page="${d.configPage}" optional="true"/>
+        </f:dropdownListBlock>
+      </j:if>
+    </j:forEach>
+  </f:dropdownList>
+</j:jelly>
