@@ -8,7 +8,7 @@
 
   <groupId>com.yandex.at.jenkins</groupId>
   <artifactId>compound-slaves</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.5-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
   <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
@@ -39,12 +39,6 @@
       <groupId>org.codehaus.jedi</groupId>
       <artifactId>jedi-core</artifactId>
       <version>3.0.5</version>
-    </dependency>
-    <dependency>
-      <groupId>com.yandex.at.jenkins</groupId>
-      <artifactId>nimbula</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <optional>true</optional>
     </dependency>
   </dependencies>
 

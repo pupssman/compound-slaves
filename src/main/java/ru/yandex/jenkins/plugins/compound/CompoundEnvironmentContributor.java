@@ -15,12 +15,6 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.dasein.cloud.compute.VirtualMachine;
-
-import com.yandex.at.jenkins.NimbulaException;
-import com.yandex.at.jenkins.NimbulaUtil;
-import com.yandex.at.jenkins.NimbulaSlave;
-
 /**
  * This thing is used to contribute slave parameters to running build
  *
@@ -72,8 +66,7 @@ public class CompoundEnvironmentContributor extends EnvironmentContributor {
 	/**
 	 * Compute actual values based on given {@link CompoundSlave}
 	 *
-	 * So far, it supports extraction of IP-addresses from the {@link NimbulaSlave}'s
-	 * This works if the <b>nimbula</b> plugin is installed
+	 * So far this does nothing (upstream implementation depends on a closed plugin)
 	 * @param slave
 	 * @param listener
 	 * @return
@@ -82,32 +75,6 @@ public class CompoundEnvironmentContributor extends EnvironmentContributor {
 		Map<String, String> values;
 		values = new HashMap<String, String>();
 
-		if (Hudson.getInstance().getPlugin("nimbula") == null) {
-			return values;
-		}
-
-		for (String role: slave.getAllSlaves().keySet()) {
-			int i = 0;
-			for (Slave subSlave: slave.getAllSlaves().get(role)) {
-				i++;
-
-				if (subSlave instanceof NimbulaSlave) {
-					listener.getLogger().println("[compound-slave] slave " + subSlave.getDisplayName() + " is a NimbulaSlave - adding it's IP adress");
-					NimbulaSlave nimbulaSlave = (NimbulaSlave) subSlave;
-					VirtualMachine virtualMachine;
-					try {
-						virtualMachine = NimbulaUtil.getInstance(nimbulaSlave.getCloudName()).getVirtualMachine(((NimbulaSlave) subSlave).getVmID());
-						String address = virtualMachine.getPrivateIpAddresses()[0];
-						values.put(MessageFormat.format("{0}_{1}_{2}", role, i, "ip").toLowerCase(), address);
-					} catch (NimbulaException e) {
-						e.printStackTrace(listener.fatalError("[compound-slave] Failed to get details for " + subSlave.getDisplayName() + ":\n"));
-					}
-
-				} else {
-					listener.getLogger().println("[compound-slave] slave " + subSlave.getDisplayName() + " is not a useful slave");
-				}
-			}
-		}
 		return values;
 	}
 
