@@ -2,16 +2,15 @@ package ru.yandex.jenkins.plugins.compound;
 
 import hudson.EnvVars;
 import hudson.Extension;
-import hudson.model.Hudson;
 import hudson.model.InvisibleAction;
 import hudson.model.TaskListener;
+import hudson.model.Computer;
 import hudson.model.EnvironmentContributor;
+import hudson.model.Executor;
 import hudson.model.Node;
 import hudson.model.Run;
-import hudson.model.Slave;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +36,18 @@ public class CompoundEnvironmentContributor extends EnvironmentContributor {
 
 	@Override
 	public void buildEnvironmentFor(@SuppressWarnings("rawtypes") Run run, EnvVars envs, TaskListener listener) throws IOException, InterruptedException {
-		Node node = run.getExecutor().getOwner().getNode();
+		Executor executor = run.getExecutor();
+		if (executor == null) {
+			return;
+		}
+
+		Computer owner = executor.getOwner();
+		// this may be a bit pointless, but still
+		if (owner == null) {
+			return;
+		}
+
+		Node node = owner.getNode();
 
 		if (node instanceof CompoundSlave) {
 			listener.getLogger().println("[compound-slave] contibuting environment for " + run.getFullDisplayName());
