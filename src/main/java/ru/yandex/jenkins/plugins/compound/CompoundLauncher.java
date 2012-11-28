@@ -4,6 +4,8 @@ import hudson.Launcher;
 import hudson.model.TaskListener;
 import hudson.model.Computer;
 import hudson.model.Slave;
+import hudson.remoting.Channel;
+import hudson.remoting.Channel.Listener;
 import hudson.slaves.ComputerLauncher;
 import hudson.slaves.SlaveComputer;
 
@@ -76,7 +78,12 @@ public class CompoundLauncher extends ComputerLauncher {
 
 		if (allSlavesLaunched) {
 			say(listener, "Launching root");
-			compoundSlave.getSelf().getComputer().getLauncher().launch(computer, listener);
+			computer.setChannel(compoundSlave.getSelf().getComputer().getChannel(), listener.getLogger(), new Listener() {
+				@Override
+				public void onClosed(Channel channel, IOException cause) {
+					listener.getLogger().print("Slave <" + compoundSlave.getDisplayName() + ">: channel closed");
+				}
+			});
 		} else {
 			say(listener, "Some slaves failed to come online, not launching root.");
 		}
